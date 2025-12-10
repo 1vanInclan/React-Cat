@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import "./App.css"
 
 
 const CAT_ENDPOINT_FACT = "https://catfact.ninja/fact"
@@ -7,21 +8,38 @@ const CAT_ENDPOINT_FACT = "https://catfact.ninja/fact"
 export function App() {
 
   const [fact, setFact] = useState()
+  const [imageUrl, setImageUrl] = useState()
 
+  // Recuperar la cita al cargar la pagina
   useEffect(() => {
-    async function getRandomCat() {
-      const res = await fetch(CAT_ENDPOINT_FACT)
-      const json = await res.json()
-      setFact(json.fact)
-    }
-    
-    getRandomCat()
+    fetch(CAT_ENDPOINT_FACT)
+      .then(res => res.json())
+      .then(data => {
+        const { fact } = data
+        setFact(fact)
+      })
   }, [])
+
+  // Para recuperar la imagen cada vez que tenemos una cita nueva
+  useEffect(() => {
+    if (!fact) return;
+    const threeFirstWords = fact.split(" ", 3);
+
+    fetch(
+      `https://cataas.com/cat/says/${threeFirstWords}?size=50&color=red&json=true`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        const { url } = data;
+        setImageUrl(url);
+      });
+  }, [fact]);
 
   return (
     <main>
       <h1>App de gatitos</h1>
-      { fact && <p>{fact}</p>}
+        { fact && <p>{fact}</p>}
+        { imageUrl && <img src={imageUrl} alt={`Image extrated using the first three words for ${fact}`} />}
     </main>    
   )
 }
