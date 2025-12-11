@@ -12,12 +12,7 @@ export function App() {
 
   // Recuperar la cita al cargar la pagina
   useEffect(() => {
-    fetch(CAT_ENDPOINT_FACT)
-      .then(res => res.json())
-      .then(data => {
-        const { fact } = data
-        setFact(fact)
-      })
+    
   }, [])
 
   // Para recuperar la imagen cada vez que tenemos una cita nueva
@@ -35,9 +30,19 @@ export function App() {
       });
   }, [fact]);
 
+  const handleClick = () => {
+    fetch(CAT_ENDPOINT_FACT)
+      .then(res => res.json())
+      .then(data => {
+        const { fact } = data
+        setFact(fact)
+      })
+  }
+
   return (
     <main>
       <h1>App de gatitos</h1>
+      <button onClick={ handleClick }>Get new fact</button>
         { fact && <p>{fact}</p>}
         { imageUrl && <img src={imageUrl} alt={`Image extrated using the first three words for ${fact}`} />}
     </main>    
